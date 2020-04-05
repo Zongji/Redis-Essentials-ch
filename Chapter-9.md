@@ -1,4 +1,4 @@
-# Redis 集群和Redis Sentinel(集体智慧)
+# Redis集群和Redis Sentinel
 
 ## CAP理论
 
@@ -21,6 +21,23 @@
 所有的Sentinel之间的通信是通过master节点上的名为 `__sentinel__:hello`的Pub/Sub通道进行的。
 
 ### Sentinel基本配置
+Sentinel配置包含主节点的IP,端口号，和唯一名称。该名称就是Redis集群的名称。下面的例子中，名称为`mymaster`。
+```
+sentinel monitor mymaster 127.0.0.1 6379 2
+sentinel down-after-milliseconds mymaster 30000
+sentinel failover-timeout mymaster 180000
+sentinel parallel-syncs mymaster 1
+```
+该配置指定了Redis主节点的名称mymaster，IP地址127.0.0.1，端口号6379，quorum值为2。 quorum表示参与同意认为主节点失效的最少的sentinel节点个数，主节点失效后开始进行新的master选举。
+
+master节点宕机（无法响应PING消息）超过指定毫秒数后，Sentinel节点才会通知其他Sentinel节点。这个毫秒数在`down-after-milliseconds`指令中指定。
+
+
+### 连接到Sentinel
+
+### 网络分区（脑裂）
+
+
 
 
 ## Redis集群
