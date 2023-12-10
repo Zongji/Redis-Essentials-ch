@@ -1,6 +1,20 @@
 # Redis集群和Redis Sentinel
+## aaa
+
+Redis最初被被设计得非常轻量级、非常快。Redis之前唯一的拓扑结构是master/slave结构，在这种架构中，master接收所有的写请求，并复制变更内容到slave节点，不支持自动故障转移和数据分片。这种架构形式适合以下几种场景：
+- master节点有足够的内存保存所有的数据
+- 可以添加更多的从节点增加读性能，或者网络带宽成为瓶颈时
+- 当维护master节点所在机器时，允许停止Redis应用
+- 数据冗余可以只通过slave进行冗余
+
+但是不适合以下其他场景：
 
 ## CAP理论
+大多数分布式系统的分析都是使用CAP理论，该理论中分布式系统不能同时满足一下几种：
+- Consistency 一致性： 读操作会保证能读到足最新的写入
+- Availability 可用性：任何操作都会返回操作成功或者失败的结果
+- Partition tolerance 分区容忍性： 当网络分区出现时系统可以继续工作
+
 
 ## Redis Sentinel
 当主节点出现问题，从某个节点被选取为主节点，其他从节点需要重新配置指向新的主节点。在Sentinel出现之前，这种故障切换处理只能通过手动切换，很不可靠。
@@ -34,7 +48,14 @@ master节点宕机（无法响应PING消息）超过指定毫秒数后，Sentine
 
 
 ### 连接到Sentinel
-
+Ruby  官方Redis客户端给出了简单的例子演示如何连接Redis Sentinel。
+```ruby
+SENTINEL = {
+    {:host => "127.0.0.1", :port => 23680},
+    {:host => "127.0.0.1", :port => 23681}
+}
+ redis = Redis.new(:url => "redis://mymaster", :sentinels => SENTINELS, :role => :master)
+```
 ### 网络分区（脑裂）
 
 
